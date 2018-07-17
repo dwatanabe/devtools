@@ -1,0 +1,9 @@
+# vim:ft=ansible
+- name: install ghq
+  become_user: "{{ home_user }}"
+  args:
+    creates: "{{ home_dir }}/.go/bin/ghq"
+  shell: |
+    source /etc/profile.d/goenv.sh
+    go get github.com/motemen/ghq
+  tags: install-go/ghq  

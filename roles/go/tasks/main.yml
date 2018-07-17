@@ -1,0 +1,22 @@
+# vim:ft=ansible:
+- name: git clone goenv in {{ goenv_install_dir }}
+  git: repo=https://github.com/syndbg/goenv.git dest={{ goenv_install_dir }}
+  tags: install-goenv
+
+- name: change owner {{ goenv_install_dir }}
+  file: path={{ goenv_install_dir }} state=directory recurse=yes owner={{ home_user }} group=users
+  tags: install-goenv
+
+- name: deploy /etc/profile.d/goenv.sh
+  template: src=goenv.sh.j2 dest=/etc/profile.d/goenv.sh owner=root group=root mode=0644
+  tags: install-goenv
+
+- name: install go from goenv
+  become_user: "{{ home_user }}"
+  args:
+    creates: "{{ goenv_install_dir }}/versions/{{ go_version }}/bin/go"
+  shell: |
+    source /etc/profile.d/goenv.sh
+    sudo -u {{ home_user }} goenv install {{ go_version }}
+    sudo -u {{ home_user }} goenv global {{ go_version }}
+  tags: install-goenv

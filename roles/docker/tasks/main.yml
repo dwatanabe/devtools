@@ -1,0 +1,23 @@
+# vim:ft=ansible
+- block:
+  - name: install yum-utils
+    yum: name=yum-utils state=present
+    tags: install-docker
+
+  - name: add docker repository
+    shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+    args:
+      chdir: "/etc/yum.repos.d"
+      creates: docker-ce.repo
+    tags: install-docker
+
+  - name: install docker-ce
+    yum: name=docker-ce state=present
+    tags: install-docker
+
+  - name: start docker-ce
+    systemd: name=docker.service state=started daemon_reload=yes enabled=yes
+    tags: install-docker
+
+  when: ansible_distribution_major_version == '7'
+  tags: install-docker

@@ -1,0 +1,22 @@
+# vim:ft=ansible:
+- name: git clone nvm in {{ nvm_install_dir }}
+  git: repo=https://github.com/creationix/nvm.git dest={{ nvm_install_dir }}
+  tags: install-nvm
+
+- name: change owner {{ nvm_install_dir }}  
+  file: path={{ nvm_install_dir }} state=directory recurse=yes owner={{ home_user }} group=users
+  tags: install-nvm
+
+- name: deploy /etc/profile.d/nvm.sh
+  template: src=nvm.sh.j2 dest=/etc/profile.d/nvm.sh owner=root group=root mode=0644
+  tags: install-nvm
+
+- name: install node from nvm
+  args:
+    creates: "{{ nvm_install_dir }}/versions/node/{{ node_version }}/bin/node"
+  shell: |
+    source /etc/profile
+    nvm install {{ node_version }}
+    nvm alias default {{ node_version }}
+  tags: install-nvm
+

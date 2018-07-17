@@ -1,0 +1,17 @@
+# vim:ft=ansible:
+- name: copy zsh-5.5.1.tar.gz
+  copy: src=zsh-5.5.1.tar.gz dest=/tmp
+  tags: install-zsh
+
+- name: make && make install
+  args:
+    creates: /usr/local/src/zsh-5.5.1/Src/zsh
+  shell: |
+    cd /usr/local/src
+    tar xvf /tmp/zsh-5.5.1.tar.gz
+    cd /usr/local/src/zsh-5.5.1
+    ./configure
+    make -j 4
+    make install
+  tags: install-zsh
+  

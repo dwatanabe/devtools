@@ -1,0 +1,31 @@
+# vim:ft=ansible:
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: create user
+      user: name=dwatanab group=users state=present
+  roles:
+  - { role: epel }     # install epel repository. and install dependencies of developer tool
+
+- hosts: all
+  become: yes
+  roles:
+    - { role: ruby }      # install rbenv and ruby.   from github's clone
+    - { role: ruby/gem }  # install bundle. from gem
+    - { role: python }    # install pyenv and python. from github's clone
+    - { role: nodejs }    # install nvm and nodejs.   fron github's clone
+    - { role: go }        # install goenv and go.     from github's clone
+    - { role: go/ghq }    # install ghq. from go
+
+    - { role: vim }       # install vim from source. delete already installed vim. and install neovim.
+    - { role: vim/dein }  # install dein. this is vim's plugin manager. and .vimrc
+    - { role: zsh }       # install zsh. from local source file.
+    - { role: zsh/zplug } # install zplug. this is zsh's plugin manager.
+    - { role: tmux }      # install tmux
+    - { role: tmux/tpm }  # install tpm. this is tmux's plugin manager
+    - { role: peco }      # install peco
+    - { role: tig }       # install tig
+    - { role: git-subcommands/git-now }       # install git subcommands(git-now)
+
+    - { role: docker }    # install docker-ce

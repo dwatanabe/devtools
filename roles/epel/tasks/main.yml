@@ -1,0 +1,63 @@
+# vim:ft=ansible
+- name: install epel repository epel6
+  yum: name=https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+  when: ansible_distribution_major_version == '6'
+  tags: install-epel
+
+- name: install epel repository epel7
+  yum: name=epel-release
+  when: ansible_distribution_major_version == '7'
+  tags: install-epel
+
+- name: install depend package
+  yum: name={{ item }} state=latest enablerepo=epel
+  with_items:
+    - openssl-devel
+    - mysql-devel
+    - lua-devel
+    - zlib
+    - zlib-devel
+    - bzip2
+    - bzip2-devel
+    - sqlite-devel
+    - gcc
+    - gcc-c++
+    - cmake
+    - glibc-headers
+    - libyaml-devel
+    - readline
+    - readline-devel
+    - zlib-devel
+    - libtool
+    - libffi-devel
+    - jq
+    - git
+  when: ansible_distribution_major_version == '6'
+  tags: install-devel
+
+- name: install depend package
+  yum: name={{ item }} state=latest enablerepo=epel
+  with_items:
+  - ncurses-devel
+  - openssl-devel
+  - mysql-devel
+  - lua-devel
+  - zlib
+  - zlib-devel
+  - bzip2
+  - bzip2-devel
+  - sqlite-devel
+  - gcc
+  - gcc-c++
+  - cmake
+  - glibc-headers
+  - libyaml-devel
+  - readline
+  - readline-devel
+  - zlib-devel
+  - libtool
+  - libffi-devel
+  - jq
+  - git
+  when: ansible_distribution_major_version == '7'
+  tags: install-devel

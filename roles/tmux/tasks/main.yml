@@ -1,0 +1,33 @@
+# vim:ft=ansible
+- name: delete already installed libevent
+  yum: name={{ item }} state=absent
+  with_items:
+  - libevent
+  - libevent-devel
+  - libevent-headers
+  tags: install-tmux
+
+- name: install libevent2-devel
+  yum: name=libevent2-devel state=latest enablerepo=epel
+  when: ansible_distribution_major_version == '6'
+  tags: install-tmux
+
+- name: install libevent-devel
+  yum: name=libevent-devel state=latest enablerepo=epel
+  when: ansible_distribution_major_version == '7'
+  tags: install-tmux
+
+- name: git clone tmux 
+  git: repo=https://github.com/tmux/tmux.git dest=/usr/local/src/tmux
+  tags: install-tmux
+
+- name: make && make install
+  args:
+    creates: /usr/local/src/tmux/tmux
+  shell: |
+    cd /usr/local/src/tmux
+    sh autogen.sh
+    ./configure
+    make -j 4
+    make install
+  tags: install-tmux

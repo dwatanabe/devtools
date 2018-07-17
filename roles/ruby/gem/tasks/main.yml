@@ -1,0 +1,19 @@
+# vim:ft=ansible
+- name: gem install bundler 
+  gem: name={{ item }} executable={{ home_dir }}/.rbenv/shims/gem user_install=False
+  with_items:
+    - bundler
+  tags: install-ruby/gem  
+
+- name: copy Gemfile to {{ home_dir }}
+  copy: src=Gemfile dest={{ home_dir }} owner={{ home_user }} group=users
+  tags: install-ruby/gem  
+
+- name: bundle install
+  become_user: "{{ home_user }}"
+  shell: |
+    source /etc/profile.d/rbenv.sh
+    cd {{ home_dir }}
+    bundle install --path=vendor/bundler --binstubs
+  tags: install-ruby/gem  
+

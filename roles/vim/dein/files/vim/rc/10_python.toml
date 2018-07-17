@@ -1,0 +1,41 @@
+# python plugins
+
+[[plugins]]
+repo = 'davidhalter/jedi-vim'
+on_ft = 'python'
+
+[[plugins]]
+repo = 'lambdalisue/vim-django-support'
+on_ft = 'python'
+
+[[plugins]]
+repo = 'lambdalisue/vim-pyenv'
+on_ft = 'python'
+depends = ['davidhalter/jedi-vim']
+
+[[plugins]]
+repo = 'hynek/vim-python-pep8-indent'
+on_ft = 'python'
+
+[[plugins]]
+repo = 'andviro/flake8-vim'
+on_ft = 'python'
+
+[[plugins]]
+repo = 'tell-k/vim-autopep8'
+hook_add = '''
+let g:autopep8_ignore="E501,W293"
+let g:autopep8_select="E501,W293"
+let g:autopep8_pep8_passes=100
+let g:autopep8_max_line_length=79
+let g:autopep8_aggressive=1
+let g:autopep8_aggressive=2
+let g:autopep8_disable_show_diff=1
+let g:autopep8_diff_type='horizontal'
+let g:autopep8_diff_type='vertical'
+autocmd FileType python noremap <buffer> <F8> :call Autopep8()<CR>
+autocmd FileType python set equalprg=autopep8\ -
+'''
+on_ft = 'python'
+
+# python plugins

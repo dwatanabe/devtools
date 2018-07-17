@@ -1,0 +1,45 @@
+# vim:ft=ansible:
+- name: git clone pyenv (install pyenv)
+  git: repo=https://github.com/yyuu/pyenv.git dest={{ pyenv_install_dir }} update=no
+  tags: install-pyenv
+
+- name: install pyenv in {{ pyenv_install_dir }}
+  file: path={{ pyenv_install_dir }} state=directory recurse=yes group=users mode=0775 
+  tags: install-pyenv
+
+- name: change owner {{ pyenv_install_dir }}
+  file: path={{ pyenv_install_dir }} state=directory recurse=yes owner={{ home_user }} group=users
+  tags: install-pyenv
+
+- name: deploy /etc/profile.d/pyenv.sh
+  template: src=pyenv.sh.j2 dest=/etc/profile.d/pyenv.sh owner=root group=root mode=0644
+  tags: install-pyenv
+
+- name: install python from pyenv
+  become_user: "{{ home_user }}"
+  args:
+    creates: "{{ pyenv_install_dir }}/versions/{{ python_version }}/bin/python"
+  shell: |
+    source /etc/profile.d/pyenv.sh
+    sudo -u {{ home_user }} CONFIGURE_OPTS="--enable-shared" pyenv install {{ python_version }}
+    sudo -u {{ home_user }} pyenv rehash
+    sudo -u {{ home_user }} pyenv global {{ python_version }}
+  tags: install-python
+
+- name: pip upgrade (pip install --upgrade pip)
+  become_user: "{{ home_user }}"
+  shell: |
+    source /etc/profile.d/pyenv.sh
+    sudo -u {{ home_user }} pip install --upgrade pip
+  register: result
+  changed_when: '"Requirement already up-to-date" not in result.stdout'
+  tags: install-python
+
+- name: install virtualenv (by git clone)
+  git: repo=https://github.com/yyuu/pyenv-virtualenv.git dest={{ pyenv_install_dir }}/plugins/pyenv-virtualenv update=no
+  tags: install-virtualenv
+
+- name: deploy /etc/profile.d/pyenv-virtualenv.sh
+  template: src=pyenv-virtualenv.sh.j2 dest=/etc/profile.d/pyenv-virtualenv.sh owner=root group=users mode=0644
+  tags: install-virtualenv
+

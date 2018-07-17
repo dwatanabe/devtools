@@ -1,0 +1,14 @@
+# vim:ft=ansible:
+- name: git clone git-now
+  git: repo=https://github.com/iwata/git-now.git dest=/usr/local/src/git-now update=no
+  tags: install-gitnow
+
+- name: install git-now
+  args:
+    creates: /usr/local/bin/git-now
+  shell: |
+    cd /usr/local/src/git-now
+    make install
+  tags: install-gitnow
+
+

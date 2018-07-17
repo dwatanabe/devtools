@@ -1,0 +1,12 @@
+# vim:ft=ansible
+- name: git clone tpm(Tmux Plugin Manager)
+  git: repo=https://github.com/tmux-plugins/tpm dest={{ home_dir }}/.tmux/plugins/tpm
+  tags: install-tmux/tpm
+
+- name: change owner for tpm's directory
+  file: path={{ home_dir }}/.tmux/plugins/tpm owner={{ home_user }} group=users
+  tags: install-tmux/tpm
+
+- name: deploy .tmux.conf
+  copy: src=tmux.conf dest={{ home_dir }}/.tmux.conf
+  tags: install-tmux/tpm

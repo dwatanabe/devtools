@@ -1,0 +1,33 @@
+# vim:ft=ansible:
+- name: git clone rbenv in {{ rbenv_install_dir }}
+  git: repo=https://github.com/sstephenson/rbenv.git dest={{ rbenv_install_dir }} 
+  tags: install-rbenv
+
+- name: git clone ruby-build in {{ ruby_build_install_dir }}
+  git: repo=https://github.com/sstephenson/ruby-build.git dest={{ ruby_build_install_dir }}
+  tags: install-rbenv
+
+- name: change owner {{ rbenv_install_dir }}
+  file: path={{ rbenv_install_dir }} state=directory recurse=yes owner={{ home_user }} group=users
+  tags: install-rbenv
+
+- name: change owner {{ ruby_build_install_dir }}
+  file: path={{ ruby_build_install_dir }} state=directory recurse=yes owner={{ home_user }} group=users
+  tags: install-rbenv
+
+- name: deploy /etc/profile.d/rbenv.sh
+  template: src=rbenv.sh.j2 dest=/etc/profile.d/rbenv.sh owner=root group=root mode=0644
+  tags: install-rbenv
+
+- name: install ruby from rbenv
+  become_user: "{{ home_user }}"
+  args:
+    creates: "{{ rbenv_install_dir }}/versions/{{ ruby_version }}/bin/ruby"
+  shell: |
+    source /etc/profile.d/rbenv.sh
+    cd {{ home_dir }}
+    CONFIGURE_OPTS="--enable-shared" rbenv install {{ ruby_version }}
+    rbenv rehash
+    rbenv global {{ ruby_version }}
+  tags: install-rbenv
+

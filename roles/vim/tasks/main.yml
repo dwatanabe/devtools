@@ -1,0 +1,44 @@
+# vim:ft=ansible:
+- name: delete already installed vim
+  yum: name=vim-enhanced state=absent
+  tags: install-vim
+
+- name: install depend package
+  yum: name={{ item }} state=latest enablerepo=epel
+  with_items:
+  - lua-devel
+  - ncurses-devel
+  - luarocks
+  - ctags
+  tags: install-vim
+
+- name: git clone vim
+  git: repo=https://github.com/vim/vim.git dest=/usr/local/src/vim update=no
+  tags: install-vim
+
+- name: configure && make && make install
+  args:
+    creates: /usr/local/src/vim/src/vim
+  shell: |
+    cd /usr/local/src/vim
+    LDFLAGS="-Wl,-rpath={{ pyenv_install_dir }}/versions/{{ python_version }}/lib" ./configure --enable-fail-if-missing --enable-multibyte --with-features=huge --enable-cscope --enable-fontset --enable-luainterp=dynamic --enable-rubyinterp=dynamic --enable-python3interp=dynamic
+    make -j 4
+    make install
+  tags: install-vim
+
+- name: git clone neovim
+  git: repo=https://github.com/neovim/neovim.git dest=/usr/local/src/neovim update=no
+  tags: install-vim
+
+- name: make && make install
+  args:
+    creates: /usr/local/src/neovim/build/bin/nvim
+  shell: |
+    cd /usr/local/src/neovim
+    make CMAKE_BUILD_TYPE=RelWithDebInfo
+    make install
+  tags: install-vim
+
+- name: copy directory .vim/{colors,indent,ftdetect}
+  copy: src=vim/ dest={{ home_dir }}/.vim/ owner={{ home_user }} group=users
+  tags: install-vim

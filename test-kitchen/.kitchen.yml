@@ -1,0 +1,21 @@
+---
+driver:
+  name: docker
+
+provisioner:
+  name: ansible_playbook
+  playbook: ../devtools.yml
+  hosts: localhost
+  roles_path: ../roles
+  group_vars_path: ../group_vars
+  ansible_verbose: true
+
+platforms:
+  - name: centos7
+    driver_config:
+      image: centos
+
+suites:
+  - name: devtools
+    run_list:
+    attributes:

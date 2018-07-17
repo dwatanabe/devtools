@@ -1,0 +1,28 @@
+# vim:ft=ansible:
+- name: delete folder
+  file: path={{ item }} state=absent
+  with_items:
+    - "{{ home_dir }}/.cache"
+    - "{{ home_dir }}/.config/vim/dein" 
+  tags: install-vim/dein  
+
+- name: create dein install dir [$HOME/.cache/dein]
+  file: path={{ item }} state=directory owner={{ home_user }} group=users
+  with_items:
+    - "{{ dein_install_dir }}"
+  tags: install-vim/dein
+
+- name: copy directory for plugin (vim/rc/*.toml and nvim/rc/*.toml) [$HOME/.config]
+  copy: src={{ item.src }} dest={{ item.dest }} owner={{ home_user }} group=users
+  with_items:
+    - { src: nvim, dest: "{{ dein_configfile_dir }}" }
+    - { src: vim, dest: "{{ dein_configfile_dir }}" }
+  tags: install-vim/dein
+
+- name: copy file for setting ("{{ home_dir }}"/.vimrc and "{{ dein_configfile_dir }}"init.vim etc...)
+  copy: src={{ item.src }} dest={{ item.dest }} owner={{ home_user }} group=users
+  with_items:
+    - { src: init.vim, dest: "{{ dein_configfile_dir }}/nvim/init.vim" }
+    - { src: vimrc, dest: "{{ home_dir }}/.vimrc" } 
+      #- { src: config, dest: "{{ home_dir }}/.vim/" } 
+  tags: install-vim/dein

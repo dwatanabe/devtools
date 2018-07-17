@@ -1,0 +1,27 @@
+home_user: `whoami`
+home_dir: "/home/{{ home_user }}"
+
+rbenv_install_dir: "{{ home_dir }}/.rbenv"
+ruby_build_install_dir: "{{ rbenv_install_dir }}/plugins/ruby-build"
+ruby_version: 2.4.1
+
+pyenv_install_dir: "{{ home_dir }}/.pyenv"
+python_version: 3.6.3
+
+nvm_install_dir: "{{ home_dir }}/.nvm"
+node_version: v8.1.2
+
+goenv_install_dir: "{{ home_dir }}/.goenv"
+go_version: 1.8.3
+
+# vim plugin manager
+dein_install_dir: "{{ home_dir }}/.cache/dein"
+dein_configfile_dir: "{{ home_dir }}/.config"
+
+# zsh's plugin manager
+zplug_install_dir: "{{ home_dir }}/.zplug"
+prezto_install_dir: "{{ home_dir }}/.zprezto"
+
+# epel repository
+epel6_repo_url: https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+

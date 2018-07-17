@@ -1,0 +1,6 @@
+# -- deploy by ansible --
+export PATH="{{ goenv_install_dir }}/bin:$PATH"
+eval "$(goenv init -)"
+export GOPATH=$HOME/.go
+export PATH=$PATH:$GOPATH/bin
+# -- deploy by ansible --

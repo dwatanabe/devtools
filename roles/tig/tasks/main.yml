@@ -1,0 +1,19 @@
+# vim:ft=ansible
+- name: git clone tig
+  git: repo=https://github.com/jonas/tig.git dest=/usr/local/src/tig update=no
+  tags: install-tig
+
+- name: configure && make && make install
+  args:
+    creates: /usr/local/bin/tig
+  shell: |
+    cd /usr/local/src/tig
+    ./autogen.sh
+    ./configure --without-ncurses
+    make -j 4
+    make install
+  tags: install-tig
+
+- name: deploy tigrc
+  copy: src=tigrc dest={{ home_dir }}/.tigrc owner={{ home_user }}
+  tags: install-tig
